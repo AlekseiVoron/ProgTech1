@@ -15,7 +15,6 @@ public class Merger {
 
         try(FileWriter fw = new FileWriter(Constants.FILE_OUTPUT)) {
             BufferedWriter bw = new BufferedWriter(fw);
-            ArrayList<String> buffer = new ArrayList<>();
             ArrayList<FileReader> tempFileReaders = new ArrayList<>();
             ArrayList<BufferedReader> tempBufferReaders = new ArrayList<>();
             for (int i = 0; i < tempFileNumber; i++) {
@@ -24,8 +23,11 @@ public class Merger {
                 tempBufferReaders.add(new BufferedReader(fr));
             }
             int emptyFiles = 0;
+
             do {
                 emptyFiles = 0;
+                String minStr = null;
+                int minStrNum = 0;
                 for (int i = 0; i < tempFileNumber; i++) {
                     String t = null;
                     if (listOfBuffers.get(i).isEmpty()) {
@@ -38,21 +40,26 @@ public class Merger {
                         }
                         if (t == null) {
                             emptyFiles++;
+                            continue;
                         }
                     }
-                    t = listOfBuffers.get(i).pollFirst();
-                    if (t != null) {
-                        buffer.add(t);
+                    t = listOfBuffers.get(i).getFirst();
+                    if (t != null && minStr == null) {
+                        minStr = t;
+                        minStrNum = i;
+                    }
+                    else if (t != null && t.compareTo(minStr) < 0) {
+                        minStr = t;
+                        minStrNum = i;
                     }
                 }
-                Collections.sort(buffer);
-                for (String str : buffer) {
-                    bw.write(str);
-                    bw.newLine();
+                if (emptyFiles == tempFileNumber) {
+                    break;
                 }
+                bw.write(listOfBuffers.get(minStrNum).pollFirst());
+                bw.newLine();
                 bw.flush();
-                buffer.clear();
-            } while (emptyFiles != tempFileNumber);
+            } while (true);
             for (FileReader fr : tempFileReaders) {
                 fr.close();
             }
