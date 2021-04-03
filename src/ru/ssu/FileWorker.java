@@ -25,27 +25,6 @@ public class FileWorker {
         fw.close();
     }
 
-    public static void makeRandomInputFile() {
-        try {
-            FileWriter fw = new FileWriter(Constants.FILE_INPUT);
-            BufferedWriter bw = new BufferedWriter(fw);
-            Random rng = new Random();
-            for (int strNum = 0; strNum < 10000000; strNum++) {
-                int len = 10 + rng.nextInt(100);
-                StringBuilder text = new StringBuilder();
-                for (int i = 0; i < len; i++) {
-                    text.append(Constants.AVAILABLE_CHARS.charAt(rng.nextInt(Constants.AVAILABLE_CHARS.length())));
-                }
-                bw.write(String.valueOf(text));
-                bw.newLine();
-                bw.flush();
-            }
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void recursiveDelete(File file) {
         if (!file.exists())
             return;
